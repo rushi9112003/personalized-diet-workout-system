@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Plans | NutriFit ML{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold mb-1 text-dark">
+                <i class="fa-solid fa-bookmark text-primary me-2"></i> Saved Recommendation Plans
+            </h2>
+            <p class="text-muted mb-0 small">
+                Browse, review, and download previously generated diet and workout plans saved to the local SQLite database.
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('index') }}" class="btn btn-primary fw-bold shadow-sm rounded-pill px-4">
+                <i class="fa-solid fa-plus me-1"></i> Generate New Plan
+            </a>
+        </div>
+    </div>
+
+    {% if plans and plans|length > 0 %}
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr class="small text-muted text-uppercase">
+                            <th style="width: 8%;">Plan ID</th>
+                            <th style="width: 15%;">Created At</th>
+                            <th style="width: 18%;">User Profile</th>
+                            <th style="width: 15%;">Goal & Diet</th>
+                            <th style="width: 14%;">Targets</th>
+                            <th style="width: 12%;">Split</th>
+                            <th style="width: 18%;" class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in plans %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-dark fw-bold px-2 py-1">#{{ p.id }}</span>
+                                </td>
+                                <td class="small text-muted">
+                                    <i class="fa-regular fa-clock me-1"></i> {{ p.created_at }}
+                                </td>
+                                <td>
+                                    <div class="fw-semibold text-dark">{{ p.age }} yrs, {{ p.gender.capitalize() }}</div>
+                                    <div class="small text-muted">{{ p.height }}cm | {{ p.weight }}kg (BMI: {{ p.bmi }})</div>
+                                </td>
+                                <td>
+                                    <div><span class="badge bg-primary-subtle text-primary">{{ p.fitness_goal.replace('_', ' ').capitalize() }}</span></div>
+                                    <div class="small text-muted mt-1">{{ p.dietary_pref.capitalize() }}</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-danger">{{ p.target_calories }} kcal</div>
+                                    <div class="small text-primary">{{ p.protein_g }}g Protein</div>
+                                </td>
+                                <td>
+                                    <div class="small fw-semibold">{{ p.workout_days }} Days/wk</div>
+                                    <div class="small text-muted">{{ p.available_equipment.capitalize() }}</div>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ url_for('view_plan', plan_id=p.id) }}" class="btn btn-outline-primary" title="View Full Plan">
+                                            <i class="fa-solid fa-eye me-1"></i> View
+                                        </a>
+                                        <a href="{{ url_for('download_plan', plan_id=p.id) }}" class="btn btn-outline-secondary" title="Download Text File">
+                                            <i class="fa-solid fa-download"></i>
+                                        </a>
+                                        <form action="{{ url_for('delete_plan', plan_id=p.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete Plan #{{ p.id }}?');">
+                                            <button type="submit" class="btn btn-outline-danger" title="Delete Plan">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <div class="py-4">
+                <i class="fa-regular fa-folder-open text-muted fs-1 mb-3"></i>
+                <h5 class="fw-bold text-dark">No Saved Plans Found</h5>
+                <p class="text-muted small mb-4">You haven't saved any diet and workout plans to the database yet.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary fw-bold px-4 py-2 rounded-pill">
+                    <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate Your First Plan
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

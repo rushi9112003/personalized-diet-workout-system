@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}Recommendation Dashboard | NutriFit ML{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+    
+    <!-- Top Action & Status Bar -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-md-7">
+            <h2 class="fw-bold mb-1 text-dark">
+                <i class="fa-solid fa-chart-pie text-primary me-2"></i> Your Personalized Recommendation Dashboard
+            </h2>
+            <p class="text-muted mb-0 small">
+                {% if is_saved_view %}
+                    Viewing Saved Plan <strong>#{{ plan.id }}</strong> (Created: {{ plan.created_at }})
+                {% else %}
+                    Freshly generated via Content-Based NearestNeighbors ML Algorithm
+                {% endif %}
+            </p>
+        </div>
+        <div class="col-md-5 text-md-end">
+            {% if is_saved_view %}
+                <a href="{{ url_for('download_plan', plan_id=plan.id) }}" class="btn btn-outline-primary fw-semibold me-2 shadow-sm">
+                    <i class="fa-solid fa-file-arrow-down me-1"></i> Download Plan (.TXT)
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary fw-semibold shadow-sm">
+                    <i class="fa-solid fa-plus me-1"></i> New Plan
+                </a>
+            {% else %}
+                <form action="{{ url_for('save', plan_id=plan.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-success fw-bold me-2 shadow-sm">
+                        <i class="fa-solid fa-bookmark me-1"></i> Save Plan to Database
+                    </button>
+                </form>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary fw-semibold shadow-sm">
+                    <i class="fa-solid fa-arrow-rotate-left me-1"></i> Re-Calculate
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- METRICS ROW: 4 SUMMARY CARDS -->
+    <div class="row g-3 mb-4">
+        <!-- 1. BMI Card -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm rounded-3">
+                <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-semibold text-uppercase">Body Mass Index</span>
+                        <i class="fa-solid fa-scale-balanced text-primary fs-5"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <h2 class="fw-bold mb-0 text-dark">{{ plan.bmi.bmi }}</h2>
+                            <span class="badge bg-{{ plan.bmi.badge_class }}-subtle text-{{ plan.bmi.badge_class }} fw-bold px-2 py-1">
+                                {{ plan.bmi.category }}
+                            </span>
+                        </div>
+                        <p class="text-secondary small mb-0">{{ plan.bmi.explanation }}</p>
+                    </div>
+                    <div class="progress mt-3" style="height: 6px;">
+                        {% set bmi_pct = [(plan.bmi.bmi / 40.0) * 100, 100]|min %}
+                        <div class="progress-bar bg-{{ plan.bmi.badge_class }}" role="progressbar" style="width: {{ bmi_pct }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Target Calories Card -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm rounded-3">
+                <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-semibold text-uppercase">Daily Calorie Target</span>
+                        <i class="fa-solid fa-fire text-danger fs-5"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <h2 class="fw-bold mb-0 text-danger">{{ plan.nutrition.target_calories }}</h2>
+                            <span class="text-muted small fw-semibold">kcal / day</span>
+                        </div>
+                        <p class="text-secondary small mb-0">
+                            {% if plan.nutrition.bmr %}
+                                BMR: <strong>{{ plan.nutrition.bmr }} kcal</strong> | TDEE: <strong>{{ plan.nutrition.tdee }} kcal</strong>
+                            {% else %}
+                                Calibrated for {{ plan.fitness_goal.replace('_', ' ') }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small mt-3 pt-1 border-top">
+                        <span>Goal Adjustment</span>
+                        <span class="fw-semibold text-dark">{{ plan.fitness_goal.replace('_', ' ').capitalize() }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Macronutrient Breakdown Card -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm rounded-3">
+                <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-semibold text-uppercase">Daily Macronutrients</span>
+                        <i class="fa-solid fa-chart-column text-success fs-5"></i>
+                    </div>
+                    <div>
+                        <div class="row text-center g-1 mb-2">
+                            <div class="col-4">
+                                <span class="badge bg-primary w-100 py-1 mb-1">Protein</span>
+                                <div class="fw-bold fs-6">{{ plan.nutrition.protein_g }}g</div>
+                            </div>
+                            <div class="col-4">
+                                <span class="badge bg-warning text-dark w-100 py-1 mb-1">Carbs</span>
+                                <div class="fw-bold fs-6">{{ plan.nutrition.carbs_g }}g</div>
+                            </div>
+                            <div class="col-4">
+                                <span class="badge bg-danger w-100 py-1 mb-1">Fats</span>
+                                <div class="fw-bold fs-6">{{ plan.nutrition.fat_g }}g</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-stacked mt-2" style="height: 6px;">
+                        {% set p_cal = plan.nutrition.protein_g * 4 %}
+                        {% set c_cal = plan.nutrition.carbs_g * 4 %}
+                        {% set f_cal = plan.nutrition.fat_g * 9 %}
+                        {% set tot = p_cal + c_cal + f_cal %}
+                        <div class="progress" role="progressbar" style="width: {{ (p_cal/tot)*100 }}%">
+                            <div class="progress-bar bg-primary"></div>
+                        </div>
+                        <div class="progress" role="progressbar" style="width: {{ (c_cal/tot)*100 }}%">
+                            <div class="progress-bar bg-warning"></div>
+                        </div>
+                        <div class="progress" role="progressbar" style="width: {{ (f_cal/tot)*100 }}%">
+                            <div class="progress-bar bg-danger"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Profile Snapshot Card -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm rounded-3">
+                <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted small fw-semibold text-uppercase">Profile & Split</span>
+                        <i class="fa-solid fa-id-card text-info fs-5"></i>
+                    </div>
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Diet:</span>
+                            <span class="badge bg-success-subtle text-success fw-semibold">{{ plan.dietary_pref.capitalize() }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Equipment:</span>
+                            <span class="fw-semibold text-dark">{{ plan.available_equipment.capitalize() }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">Experience:</span>
+                            <span class="fw-semibold text-dark">{{ plan.workout_experience.capitalize() }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Schedule:</span>
+                            <span class="fw-semibold text-dark">{{ plan.workout_days }} Days/Week</span>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2 pt-1 border-top text-truncate" title="Allergies: {{ plan.allergies|join(', ') if plan.allergies else 'None' }}">
+                        <i class="fa-solid fa-shield-halved text-danger me-1"></i> Excluded: 
+                        <strong>{{ plan.allergies|join(', ') if plan.allergies else 'None' }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN TABS: 7-DAY DIET PLAN & WEEKLY WORKOUT SCHEDULE -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="card-header bg-white border-bottom p-0">
+            <ul class="nav nav-pills nav-fill p-2 gap-2" id="planMainTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold py-3" id="diet-tab" data-bs-toggle="tab" data-bs-target="#diet-pane" type="button" role="tab">
+                        <i class="fa-solid fa-utensils text-success me-2"></i> 7-Day Personalized Meal Plan
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold py-3" id="workout-tab" data-bs-toggle="tab" data-bs-target="#workout-pane" type="button" role="tab">
+                        <i class="fa-solid fa-dumbbell text-primary me-2"></i> Weekly Workout Routine & Split
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="tab-content" id="planMainTabsContent">
+                
+                <!-- PANE 1: 7-DAY MEAL PLAN -->
+                <div class="tab-pane fade show active" id="diet-pane" role="tabpanel" tabindex="0">
+                    
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="fa-solid fa-calendar-week text-success me-2"></i> 7-Day Nutritional Schedule
+                        </h5>
+                        <span class="badge bg-light text-secondary border small">
+                            <i class="fa-solid fa-robot text-primary me-1"></i> Cosine Similarity ML-Ranked + Scaled Portions
+                        </span>
+                    </div>
+
+                    <!-- Day Sub-Tabs -->
+                    <ul class="nav nav-tabs mb-4 flex-nowrap overflow-x-auto" id="daysTab" role="tablist">
+                        {% for day_plan in plan.meal_plan %}
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link {% if loop.first %}active fw-bold{% endif %} text-nowrap py-2 px-3" 
+                                        id="day-tab-{{ loop.index }}" 
+                                        data-bs-toggle="tab" 
+                                        data-bs-target="#day-content-{{ loop.index }}" 
+                                        type="button" role="tab">
+                                    Day {{ loop.index }}
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <!-- Day Tab Panes -->
+                    <div class="tab-content" id="daysTabContent">
+                        {% for day_plan in plan.meal_plan %}
+                            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
+                                 id="day-content-{{ loop.index }}" 
+                                 role="tabpanel">
+                                
+                                <!-- Day Summary Header -->
+                                <div class="alert alert-light border d-flex flex-wrap justify-content-between align-items-center mb-4 py-2 px-3">
+                                    <div class="fw-bold text-dark fs-6">
+                                        <i class="fa-regular fa-clock me-1 text-primary"></i> {{ day_plan.day }}
+                                    </div>
+                                    <div class="d-flex gap-3 small">
+                                        <span>Total Energy: <strong class="text-danger">{{ day_plan.total_calories }} kcal</strong></span>
+                                        <span>Protein: <strong class="text-primary">{{ day_plan.total_protein }}g</strong></span>
+                                        <span>Carbs: <strong class="text-warning text-dark">{{ day_plan.total_carbs }}g</strong></span>
+                                        <span>Fats: <strong class="text-danger">{{ day_plan.total_fat }}g</strong></span>
+                                    </div>
+                                </div>
+
+                                <!-- Meals Cards / Table -->
+                                <div class="row g-3">
+                                    {% for meal in day_plan.meals %}
+                                        <div class="col-md-6 col-lg-3">
+                                            <div class="card h-100 border rounded-3 shadow-none bg-white meal-card">
+                                                <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center py-2">
+                                                    <span class="badge bg-secondary fw-bold">{{ meal.meal_type }}</span>
+                                                    <span class="badge bg-success-subtle text-success small" title="Content-Based Cosine Similarity">
+                                                        {{ meal.similarity_score }}% Match
+                                                    </span>
+                                                </div>
+                                                <div class="card-body p-3 d-flex flex-column justify-content-between">
+                                                    <div>
+                                                        <h6 class="fw-bold text-dark mb-1">{{ meal.name }}</h6>
+                                                        <p class="text-muted small mb-2"><i class="fa-solid fa-bowl-food me-1"></i> {{ meal.portion }}</p>
+                                                    </div>
+                                                    <div>
+                                                        <div class="bg-light p-2 rounded-2 small mb-2">
+                                                            <div class="d-flex justify-content-between mb-1">
+                                                                <span>Calories:</span>
+                                                                <strong class="text-danger">{{ meal.calories }} kcal</strong>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between mb-1">
+                                                                <span>Protein:</span>
+                                                                <strong class="text-primary">{{ meal.protein_g }}g</strong>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between mb-1">
+                                                                <span>Carbs:</span>
+                                                                <span class="text-secondary">{{ meal.carbs_g }}g</span>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between">
+                                                                <span>Fats:</span>
+                                                                <span class="text-secondary">{{ meal.fat_g }}g</span>
+                                                            </div>
+                                                        </div>
+                                                        {% if meal.allergens and meal.allergens != 'none' %}
+                                                            <div class="small text-muted">
+                                                                <i class="fa-solid fa-triangle-exclamation text-warning me-1"></i> Contains: {{ meal.allergens }}
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="small text-success">
+                                                                <i class="fa-solid fa-check-circle me-1"></i> Allergen-free
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- PANE 2: WEEKLY WORKOUT PLAN -->
+                <div class="tab-pane fade" id="workout-pane" role="tabpanel" tabindex="0">
+                    
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="fa-solid fa-dumbbell text-primary me-2"></i> Weekly Split & Exercise Schedule
+                        </h5>
+                        <span class="badge bg-light text-secondary border small">
+                            <i class="fa-solid fa-filter text-primary me-1"></i> Tailored for {{ plan.workout_experience.capitalize() }} • {{ plan.available_equipment.capitalize() }}
+                        </span>
+                    </div>
+
+                    <div class="accordion" id="workoutAccordion">
+                        {% for day_workout in plan.workout_plan %}
+                            <div class="accordion-item border mb-3 rounded-3 overflow-hidden shadow-none">
+                                <h2 class="accordion-header" id="heading-{{ loop.index }}">
+                                    <button class="accordion-button {% if not loop.first %}collapsed{% endif %} py-3" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#collapse-{{ loop.index }}" 
+                                            aria-expanded="{% if loop.first %}true{% else %}false{% endif %}">
+                                        <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-dark fw-bold">{{ day_workout.day }}</span>
+                                                <span class="fw-bold text-dark">{{ day_workout.focus }}</span>
+                                            </div>
+                                            {% if day_workout.is_rest %}
+                                                <span class="badge bg-success-subtle text-success">Rest Day</span>
+                                            {% else %}
+                                                <span class="badge bg-primary-subtle text-primary">{{ day_workout.exercises|length }} Exercises</span>
+                                            {% endif %}
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse-{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#workoutAccordion">
+                                    <div class="accordion-body bg-light-subtle p-3 p-md-4">
+                                        
+                                        <!-- Notes -->
+                                        <div class="alert alert-info py-2 px-3 small mb-3">
+                                            <i class="fa-solid fa-circle-info me-1"></i> <strong>Session Instructions:</strong> {{ day_workout.notes }}
+                                        </div>
+
+                                        {% if not day_workout.is_rest %}
+                                            <div class="table-responsive bg-white rounded-3 border">
+                                                <table class="table table-hover align-middle mb-0">
+                                                    <thead class="table-light">
+                                                        <tr class="small text-muted text-uppercase">
+                                                            <th style="width: 5%;">#</th>
+                                                            <th style="width: 25%;">Exercise</th>
+                                                            <th style="width: 15%;">Target Muscle</th>
+                                                            <th style="width: 15%;">Sets & Reps</th>
+                                                            <th style="width: 10%;">Rest</th>
+                                                            <th style="width: 30%;">Form Cue & Home Alt</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for ex in day_workout.exercises %}
+                                                            <tr>
+                                                                <td class="fw-bold text-muted">{{ loop.index }}</td>
+                                                                <td>
+                                                                    <div class="fw-bold text-dark">{{ ex.name }}</div>
+                                                                    <div class="small text-muted">{{ ex.instructions }}</div>
+                                                                </td>
+                                                                <td><span class="badge bg-secondary-subtle text-secondary">{{ ex.target_muscle }}</span></td>
+                                                                <td><strong class="text-primary">{{ ex.sets }} sets</strong> × {{ ex.reps }}</td>
+                                                                <td><span class="badge bg-light text-dark border">{{ ex.rest }}</span></td>
+                                                                <td>
+                                                                    <div class="small text-success mb-1">
+                                                                        <i class="fa-solid fa-lightbulb me-1"></i> <strong>Cue:</strong> {{ ex.form_cues }}
+                                                                    </div>
+                                                                    <div class="small text-muted">
+                                                                        <i class="fa-solid fa-house me-1"></i> <strong>Alt:</strong> {{ ex.home_alternative }}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center py-4">
+                                                <i class="fa-solid fa-bed text-success fs-1 mb-2"></i>
+                                                <h6 class="fw-bold text-dark">Active Recovery & Muscle Repair</h6>
+                                                <p class="text-muted small mb-0">Hydrate well, aim for 7-9 hours of sleep, and perform light mobility or a 30-minute easy walk.</p>
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Row -->
+    <div class="card bg-light border-0 p-4 rounded-4 shadow-sm text-center">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+            {% if is_saved_view %}
+                <a href="{{ url_for('download_plan', plan_id=plan.id) }}" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                    <i class="fa-solid fa-file-arrow-down me-2"></i> Download Full Plan as Text File (.TXT)
+                </a>
+                <a href="{{ url_for('saved_plans') }}" class="btn btn-outline-secondary fw-semibold px-4 py-2 rounded-pill">
+                    <i class="fa-solid fa-list me-1"></i> View All Saved Plans
+                </a>
+            {% else %}
+                <form action="{{ url_for('save', plan_id=plan.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-success fw-bold px-4 py-2 rounded-pill shadow-sm">
+                        <i class="fa-solid fa-bookmark me-2"></i> Save This Plan to SQLite Database
+                    </button>
+                </form>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-dark fw-semibold px-4 py-2 rounded-pill">
+                    <i class="fa-solid fa-sliders me-1"></i> Edit Parameters & Regenerate
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

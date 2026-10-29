@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Plan Generator | Personalized Diet & Workout Recommender{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Header -->
+    <div class="row justify-content-center text-center mb-4">
+        <div class="col-lg-9">
+            <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill mb-2">
+                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI & NearestNeighbors ML Recommendation
+            </span>
+            <h1 class="display-6 fw-bold text-dark">Personalized Diet & Workout Recommendation System</h1>
+            <p class="text-muted lead fs-6">
+                Enter your physical metrics, fitness goals, dietary restrictions, and workout availability to generate an ML-ranked 7-day nutritional meal plan and weekly exercise schedule.
+            </p>
+        </div>
+    </div>
+
+    <!-- Generator Form Container -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-gradient bg-primary text-white p-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h4 class="fw-bold mb-1"><i class="fa-solid fa-clipboard-user me-2"></i> User Profile Questionnaire</h4>
+                            <p class="mb-0 text-white-50 small">All inputs are used strictly for local ML inference and BMI/BMR calculation.</p>
+                        </div>
+                        <span class="badge bg-white text-primary fw-semibold px-3 py-2 rounded-pill">
+                            <i class="fa-solid fa-lock me-1"></i> Adult (18+) Validated
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form id="recommendationForm" action="{{ url_for('generate') }}" method="POST" onsubmit="return validateForm();">
+
+                        <!-- SECTION 1: BIOMETRICS & ACTIVITY -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="fa-solid fa-ruler-combined text-primary me-2"></i> 1. Physical Biometrics & Activity
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <!-- Age -->
+                                <div class="col-md-3">
+                                    <label for="age" class="form-label fw-semibold">Age (Years) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fa-solid fa-cake-candles"></i></span>
+                                        <input type="number" class="form-control" id="age" name="age" min="18" max="100" value="24" required>
+                                    </div>
+                                    <div class="form-text small">Must be 18 or older.</div>
+                                </div>
+
+                                <!-- Gender -->
+                                <div class="col-md-3">
+                                    <label for="gender" class="form-label fw-semibold">Biological Gender <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="gender" name="gender" required>
+                                        <option value="male" selected>Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other / Non-Binary</option>
+                                    </select>
+                                    <div class="form-text small">Used for Mifflin-St Jeor BMR.</div>
+                                </div>
+
+                                <!-- Height -->
+                                <div class="col-md-3">
+                                    <label for="height" class="form-label fw-semibold">Height (cm) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fa-solid fa-arrows-up-down"></i></span>
+                                        <input type="number" step="0.5" class="form-control" id="height" name="height" min="100" max="250" value="175" required>
+                                    </div>
+                                    <div class="form-text small">e.g., 175 cm</div>
+                                </div>
+
+                                <!-- Weight -->
+                                <div class="col-md-3">
+                                    <label for="weight" class="form-label fw-semibold">Weight (kg) <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fa-solid fa-weight-scale"></i></span>
+                                        <input type="number" step="0.5" class="form-control" id="weight" name="weight" min="30" max="250" value="70" required>
+                                    </div>
+                                    <div class="form-text small">e.g., 70 kg</div>
+                                </div>
+
+                                <!-- Activity Level -->
+                                <div class="col-md-12 mt-3">
+                                    <label for="activity_level" class="form-label fw-semibold">Daily Physical Activity Level <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="activity_level" name="activity_level" required>
+                                        <option value="sedentary">Sedentary (Desk job, little to no regular exercise)</option>
+                                        <option value="light">Lightly Active (Light exercise / sports 1-3 days/week)</option>
+                                        <option value="moderate" selected>Moderately Active (Moderate exercise / gym 3-5 days/week)</option>
+                                        <option value="very_active">Very Active (Hard exercise / sports 6-7 days/week)</option>
+                                        <option value="extra_active">Extra Active (Very intense daily training or physical labor job)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2: GOALS & DIETARY PREFERENCES -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="fa-solid fa-utensils text-success me-2"></i> 2. Goals & Nutritional Preferences
+                            </h5>
+
+                            <div class="row g-3">
+                                <!-- Fitness Goal -->
+                                <div class="col-md-6">
+                                    <label for="fitness_goal" class="form-label fw-semibold">Primary Fitness Goal <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="fitness_goal" name="fitness_goal" required>
+                                        <option value="weight_loss" selected>Weight Loss (Caloric Deficit ~450 kcal + High Protein)</option>
+                                        <option value="muscle_gain">Muscle Gain / Hypertrophy (Caloric Surplus +350 kcal + High Protein)</option>
+                                        <option value="maintenance">Maintenance / General Health (Isometric Energy Balance)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Dietary Preference -->
+                                <div class="col-md-6">
+                                    <label for="dietary_pref" class="form-label fw-semibold">Dietary Preference <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="dietary_pref" name="dietary_pref" required>
+                                        <option value="veg" selected>Vegetarian (Dairy, Legumes, Grains, Vegetables)</option>
+                                        <option value="non-veg">Non-Vegetarian (Poultry, Fish, Eggs, Dairy, Plant foods)</option>
+                                        <option value="vegan">Vegan (100% Plant-based: Tofu, Soya, Legumes, Grains)</option>
+                                        <option value="eggetarian">Eggetarian (Vegetarian + Whole Eggs & Egg Whites)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Food Allergies / Intolerances -->
+                                <div class="col-12 mt-3">
+                                    <label class="form-label fw-semibold d-flex align-items-center justify-content-between">
+                                        <span><i class="fa-solid fa-ban text-danger me-1"></i> Food Allergies & Exclusions (Zero-Tolerance ML Filter)</span>
+                                        <span class="text-muted small fw-normal">Select all that apply</span>
+                                    </label>
+                                    <div class="card bg-light border-0 p-3">
+                                        <div class="row g-2">
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="dairy" id="allergy_dairy">
+                                                    <label class="form-check-label small" for="allergy_dairy">Dairy / Lactose (Paneer, Curd, Whey)</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="peanuts" id="allergy_peanuts">
+                                                    <label class="form-check-label small" for="allergy_peanuts">Peanuts / Peanut Butter</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="nuts" id="allergy_nuts">
+                                                    <label class="form-check-label small" for="allergy_nuts">Tree Nuts (Almonds, Walnuts)</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="gluten" id="allergy_gluten">
+                                                    <label class="form-check-label small" for="allergy_gluten">Gluten / Wheat (Roti, Toast)</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="soy" id="allergy_soy">
+                                                    <label class="form-check-label small" for="allergy_soy">Soy (Soya Chunks, Tofu)</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="eggs" id="allergy_eggs">
+                                                    <label class="form-check-label small" for="allergy_eggs">Eggs</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="fish" id="allergy_fish">
+                                                    <label class="form-check-label small" for="allergy_fish">Fish</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="allergies" value="shellfish" id="allergy_shellfish">
+                                                    <label class="form-check-label small" for="allergy_shellfish">Shellfish / Prawns</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-text small text-muted mt-1">
+                                        <i class="fa-solid fa-shield-check text-success me-1"></i> Hard constraint: Any recipe containing a checked allergen will be strictly filtered out before similarity ranking.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 3: WORKOUT CONFIGURATION -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="fa-solid fa-dumbbell text-warning me-2"></i> 3. Workout Routine & Equipment Setup
+                            </h5>
+
+                            <div class="row g-3">
+                                <!-- Workout Experience -->
+                                <div class="col-md-4">
+                                    <label for="workout_experience" class="form-label fw-semibold">Workout Experience <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="workout_experience" name="workout_experience" required>
+                                        <option value="beginner" selected>Beginner (0 - 6 months experience)</option>
+                                        <option value="intermediate">Intermediate (6 months - 2 years experience)</option>
+                                        <option value="advanced">Advanced (2+ years disciplined training)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Available Equipment -->
+                                <div class="col-md-4">
+                                    <label for="available_equipment" class="form-label fw-semibold">Available Equipment <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="available_equipment" name="available_equipment" required>
+                                        <option value="bodyweight">No Equipment / Bodyweight (Home)</option>
+                                        <option value="dumbbells" selected>Dumbbells / Resistance Bands (Home Gym)</option>
+                                        <option value="gym">Full Gym (Barbells, Cables, Machines)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Workout Days -->
+                                <div class="col-md-4">
+                                    <label for="workout_days" class="form-label fw-semibold">Workout Days Per Week <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="workout_days" name="workout_days" required>
+                                        <option value="3">3 Days (Full Body Split)</option>
+                                        <option value="4" selected>4 Days (Upper / Lower Split)</option>
+                                        <option value="5">5 Days (Push / Pull / Legs / Conditioning)</option>
+                                        <option value="6">6 Days (Push / Pull / Legs - 2x Cycle)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button with Loading Indicator -->
+                        <div class="text-center pt-3">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow">
+                                <span id="btnIcon"><i class="fa-solid fa-sparkles me-2"></i></span>
+                                <span id="btnText">Generate My Personalized Plan</span>
+                                <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

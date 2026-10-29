@@ -1,0 +1,99 @@
+/* 
+   NutriFit ML Recommendation System Stylesheet 
+*/
+
+:root {
+    --bs-font-sans-serif: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --primary-color: #3b82f6;
+    --primary-dark: #1d4ed8;
+    --card-border-radius: 1rem;
+}
+
+body {
+    font-family: var(--bs-font-sans-serif);
+    color: #1e293b;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.fs-7 {
+    font-size: 0.75rem;
+}
+
+/* Card Improvements */
+.card {
+    border-radius: var(--card-border-radius);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.meal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}
+
+/* Custom Scrollbar for Day Tabs */
+.overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* Pill Tabs Active State */
+.nav-pills .nav-link {
+    color: #64748b;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+.nav-pills .nav-link.active {
+    background-color: #1e293b;
+    color: #ffffff;
+}
+
+/* Day Sub-Tabs */
+.nav-tabs .nav-link {
+    color: #64748b;
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+.nav-tabs .nav-link.active {
+    color: #2563eb;
+    font-weight: 700;
+    border: none;
+    border-bottom: 2px solid #2563eb;
+    background: transparent;
+}
+
+/* Form Styles */
+.form-control:focus, .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15);
+}
+
+.form-check-input:checked {
+    background-color: #ef4444;
+    border-color: #ef4444;
+}
+
+/* Responsive Table enhancements */
+.table > :not(caption) > * > * {
+    padding: 0.85rem 1rem;
+}
+
+/* Accordion tweaks */
+.accordion-button:not(.collapsed) {
+    background-color: #eff6ff;
+    color: #1e40af;
+    box-shadow: none;
+}
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}

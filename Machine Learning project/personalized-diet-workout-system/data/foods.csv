@@ -1,0 +1,61 @@
+food_id,name,meal_type,category,calories,protein_g,carbs_g,fat_g,fiber_g,diet_type,allergens,default_serving_unit,default_serving_weight_g
+1,Oatmeal with Almonds and Chia Seeds,breakfast,Grain,320,11.5,48.0,9.0,8.0,vegan,nuts,1 bowl (60g dry oats + water + toppings),250
+2,Besan Chilla with Mint Chutney,breakfast,Legume,280,14.0,32.0,8.5,6.0,vegan,none,2 chillas (100g batter),180
+3,Masala Omelette with Whole Wheat Toast,breakfast,Protein,340,21.0,24.0,15.0,3.5,eggetarian,eggs;gluten,2 eggs + 2 slices toast,200
+4,Paneer Bhurji with 2 Phulkas,breakfast,Dairy,410,22.0,34.0,18.0,5.0,veg,dairy;gluten,1 bowl bhurji (120g paneer) + 2 phulkas,220
+5,Vegetable Poha with Roasted Peanuts,breakfast,Grain,290,7.5,45.0,9.0,4.5,vegan,peanuts,1 medium plate,200
+6,"Idli (3 pcs) with Sambar and Coconut Chutney",breakfast,Grain,310,9.0,52.0,6.5,5.5,vegan,none,3 medium idlis + 1 cup sambar,280
+7,Moong Dal Chilla Stuffed with Tofu,breakfast,Legume,300,19.0,28.0,10.0,6.0,vegan,soy,2 stuffed chillas,200
+8,Greek Yogurt Parfait with Berries & Walnuts,breakfast,Dairy,270,18.0,26.0,8.0,3.0,veg,dairy;nuts,1 bowl (180g yogurt + fruit/nuts),220
+9,"Boiled Eggs (3) with Multigrain Toast & Avocado",breakfast,Protein,380,24.0,26.0,18.0,6.0,eggetarian,eggs;gluten,3 eggs + 1 toast + avocado,220
+10,Upma with Mixed Vegetables and Cashews,breakfast,Grain,290,7.0,44.0,9.5,4.0,vegan,nuts;gluten,1 medium bowl,200
+11,Scrambled Tofu with Spinach and Toast,breakfast,Protein,280,18.0,22.0,11.0,4.5,vegan,soy;gluten,1 bowl tofu scramble + 1 slice toast,200
+12,Methi Thepla with Low Fat Curd,breakfast,Grain,320,11.0,42.0,10.5,5.0,veg,dairy;gluten,2 theplas + 1 cup curd,220
+13,Egg White Scramble with Sautéed Mushrooms & Toast,breakfast,Protein,250,23.0,22.0,4.0,3.0,eggetarian,eggs;gluten,4 egg whites + mushrooms + 1 toast,190
+14,"Ragi Dosa (2) with Tomato Chutney",breakfast,Grain,260,6.5,46.0,5.0,6.0,vegan,none,2 medium dosas + 2 tbsp chutney,190
+15,Peanut Butter Banana Toast on Multigrain,breakfast,Grain,330,12.0,46.0,12.0,5.5,vegan,peanuts;gluten,2 slices toast + 2 tbsp peanut butter,160
+16,Dal Tadka with Brown Rice and Cucumber Salad,lunch,Legume,430,16.5,72.0,7.0,9.0,vegan,none,1 cup dal + 1 cup brown rice + salad,350
+17,Grilled Chicken Breast with Quinoa and Sautéed Veggies,lunch,Poultry,480,44.0,42.0,12.0,7.0,non-veg,none,150g chicken + 1 cup cooked quinoa + veggies,380
+18,Rajma Masala with Basmati Rice and Kachumber,lunch,Legume,460,18.0,76.0,8.0,11.0,vegan,none,1 cup rajma + 1 cup rice + salad,360
+19,Palak Paneer with 2 Multigrain Rotis and Curd,lunch,Dairy,490,23.0,42.0,21.0,8.0,veg,dairy;gluten,1 bowl paneer (120g) + 2 rotis + 1/2 cup curd,340
+20,"Chole (Chickpea Curry) with 2 Rotis and Onion Salad",lunch,Legume,450,17.0,64.0,11.0,10.0,vegan,gluten,1 cup chole + 2 phulkas + salad,330
+21,"Egg Curry (2 Eggs) with Jeera Brown Rice",lunch,Protein,440,20.0,58.0,12.5,6.0,eggetarian,eggs,2 eggs in curry + 1 cup rice,340
+22,Fish Tikka with Mint Chutney and Steamed Brown Rice,lunch,Seafood,420,38.0,45.0,8.0,4.0,non-veg,fish,160g fish + 1 cup brown rice,320
+23,Soya Chunks Curry with 2 Whole Wheat Rotis,lunch,Protein,410,32.0,44.0,8.5,9.0,vegan,soy;gluten,1 bowl soya curry (50g dry chunks) + 2 rotis,300
+24,Tofu Matar Curry with Brown Rice,lunch,Protein,420,24.0,56.0,11.0,7.5,vegan,soy,1 bowl tofu curry + 1 cup brown rice,340
+25,"Chicken Tikka Masala (Light) with 2 Rotis",lunch,Poultry,490,42.0,38.0,15.0,6.0,non-veg,dairy;gluten,150g chicken tikka + 2 phulkas,320
+26,Moong Dal Khichdi with Low Fat Curd and Papadam,lunch,Grain,390,15.0,62.0,7.5,7.0,veg,dairy,1.5 cups khichdi + 1/2 cup curd,350
+27,Prawn Curry with Steamed Rice,lunch,Seafood,430,34.0,52.0,8.5,3.5,non-veg,shellfish,140g prawns + 1 cup rice,330
+28,Mixed Vegetable Sambhar with Rice & Poriyal,lunch,Legume,380,12.0,68.0,6.0,9.5,vegan,none,1.5 cups sambhar + 1 cup rice + cabbage poriyal,360
+29,Paneer and Bell Pepper Stir Fry with Quinoa,lunch,Dairy,470,24.0,40.0,20.0,7.0,veg,dairy,120g paneer + 1 cup cooked quinoa,320
+30,"Kadhi Pakora (Low Oil) with Steamed Rice",lunch,Legume,410,13.5,64.0,10.0,4.5,veg,dairy,1.5 cups kadhi + 1 cup rice,350
+31,Sprouted Moong Salad with Lemon & Green Chillies,snack,Legume,180,11.0,28.0,2.0,7.0,vegan,none,1 medium bowl (150g),150
+32,"Roasted Chana (Chickpeas) with Spices",snack,Legume,160,8.5,24.0,3.0,5.5,vegan,none,1 small bowl (50g),50
+33,Whey Protein Shake in Water or Almond Milk,snack,Protein,140,25.0,4.0,2.0,1.0,veg,dairy,1 scoop (33g) + 250ml water,280
+34,"Plant Protein Shake (Pea & Brown Rice Protein)",snack,Protein,135,24.0,3.5,2.5,1.5,vegan,none,1 scoop (32g) + 250ml water,280
+35,"Hard Boiled Eggs (2) with Black Pepper",snack,Protein,145,13.0,1.0,9.5,0.0,eggetarian,eggs,2 whole eggs,100
+36,"Masala Makhana (Fox Nuts) Roasted in 1 tsp Ghee",snack,Grain,150,3.5,24.0,4.5,3.0,veg,dairy,1 big bowl (40g),40
+37,"Peanut Butter Toast (1 Slice Multigrain)",snack,Grain,190,7.0,18.0,9.5,3.0,vegan,peanuts;gluten,1 slice + 1 tbsp peanut butter,60
+38,"Mixed Dry Fruits and Nuts (Almonds, Walnuts, Dates)",snack,Nut,180,5.0,16.0,11.0,3.5,vegan,nuts,handful (35g),35
+39,Curd with Roasted Flaxseeds and Cinnamon,snack,Dairy,150,9.0,10.0,6.5,2.5,veg,dairy,1 cup (150g curd + 1 tbsp flaxseed),160
+40,"Soya Chaap Roasted Tikka (Low Oil)",snack,Protein,210,18.0,16.0,7.5,4.0,vegan,soy;gluten,1 plate (120g),120
+41,Cucumber and Hummus Dip with Carrot Sticks,snack,Legume,160,6.0,18.0,7.0,5.0,vegan,none,3 tbsp hummus + sliced veggies,180
+42,"Fruit Chaat (Apple, Guava, Papaya) with Chaat Masala",snack,Fruit,120,2.0,28.0,0.5,5.0,vegan,none,1 bowl (200g),200
+43,Yellow Moong Dal with 2 Phulkas and Lauki Sabzi,dinner,Legume,390,16.0,58.0,8.0,9.0,vegan,gluten,1 cup dal + 2 rotis + 1 cup sabzi,330
+44,Grilled Fish Fillet with Roasted Sweet Potato & Asparagus,dinner,Seafood,440,36.0,38.0,12.0,5.5,non-veg,fish,160g fish + 1 medium sweet potato + veg,320
+45,"Grilled Paneer Tikka (140g) with Green Salad",dinner,Dairy,430,26.0,16.0,24.0,6.0,veg,dairy,1 plate paneer tikka + green salad,260
+46,Chicken and Vegetable Soup with 1 Slice Garlic Toast,dinner,Poultry,360,34.0,24.0,8.0,4.0,non-veg,gluten,1 large bowl soup + 1 toast,350
+47,Palak Mushroom Tofu Curry with 2 Jowar Rotis,dinner,Protein,380,22.0,46.0,9.5,8.5,vegan,soy,1 bowl curry + 2 jowar rotis,310
+48,"Egg Bhurji (3 eggs) with 2 Rotis and Tomato Salad",dinner,Protein,420,22.0,34.0,17.0,4.5,eggetarian,eggs;gluten,3 eggs bhurji + 2 phulkas,260
+49,"Mixed Lentil Stew (Panchmel Dal) with Brown Rice",dinner,Legume,410,17.0,66.0,7.0,10.0,vegan,none,1 cup dal + 1 cup brown rice,340
+50,"Chicken Keema (Lean) with 2 Whole Wheat Rotis",dinner,Poultry,460,40.0,36.0,14.0,5.5,non-veg,gluten,1 bowl chicken keema (150g) + 2 rotis,300
+51,Baingan Bharta with Dal Fry and 2 Phulkas,dinner,Legume,380,14.0,54.0,9.5,8.5,vegan,gluten,1 cup baingan bharta + 1/2 cup dal + 2 rotis,340
+52,Tofu & Broccoli Stir Fry with Rice Noodles,dinner,Protein,400,22.0,48.0,11.0,6.5,vegan,soy,1 large plate,320
+53,Soya Granules Matar Curry with 2 Rotis,dinner,Protein,400,30.0,42.0,8.0,9.5,vegan,soy;gluten,1 bowl soya granules + 2 phulkas,300
+54,Fish Curry with Steamed Rice and Salad,dinner,Seafood,430,34.0,50.0,9.0,3.5,non-veg,fish,150g fish in light gravy + 1 cup rice,330
+55,Stir-Fried Paneer and Capsicum with Cauliflower Rice,dinner,Dairy,370,24.0,14.0,22.0,5.5,veg,dairy,140g paneer + 1.5 cups cauliflower rice,300
+56,Vegetable Dalia Khichdi with Curd,dinner,Grain,360,13.0,56.0,7.0,8.0,veg,dairy;gluten,1.5 cups broken wheat khichdi + 1/2 cup curd,330
+57,"Lauki Kofta (Baked) in Tomato Gravy with 2 Rotis",dinner,Vegetable,360,11.0,52.0,8.5,7.0,veg,dairy;gluten,2 koftas in gravy + 2 phulkas,300
+58,Grilled Chicken Breast Salad with Olive Oil Dressing,dinner,Poultry,390,42.0,12.0,16.0,4.5,non-veg,none,180g chicken + mixed greens + 1 tbsp dressing,280
+59,Masoor Dal with 2 Bajra Rotis and Gourd Sabzi,dinner,Legume,410,18.0,62.0,8.0,10.0,vegan,none,1 cup masoor dal + 2 bajra rotis + sabzi,340
+60,"Egg White Curry (4 whites + 1 yolk) with Quinoa",dinner,Protein,370,26.0,40.0,8.0,4.5,eggetarian,eggs,egg curry + 1 cup cooked quinoa,310
